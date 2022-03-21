@@ -442,8 +442,8 @@ export default defineComponent({
 ## 生命周期
 1. vue2.x的生命周期
 
-![avatar](./src/assets/lifecycle2.png)
+![avatar](https://cn.vuejs.org/images/lifecycle.png)
 
 vue3的生命周期
 
-![http-bw](./src/assets/lifecycle3.svg)
+![http-bw](https://v3.cn.vuejs.org/images/lifecycle.svg)
