@@ -437,3 +437,13 @@ export default defineComponent({
 })
 </script>
 ```
+
+
+## 生命周期
+1. vue2.x的生命周期
+
+![avatar](./src/assets/lifecycle2.png)
+
+vue3的生命周期
+
+![http-bw](./src/assets/lifecycle3.svg)
