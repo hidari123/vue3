@@ -895,14 +895,14 @@ export default {
 	3. 如果有一个对象数据, 后面会产生新的对象来替换 ===> `shallowRef`
 	```html
 	<template>
-  <h2>App</h2>
+	  <h2>App</h2>
 
-  <h3>m1: {{m1}}</h3>
-  <h3>m2: {{m2}}</h3>
-  <h3>m3: {{m3}}</h3>
-  <h3>m4: {{m4}}</h3>
+	  <h3>m1: {{m1}}</h3>
+	  <h3>m2: {{m2}}</h3>
+	  <h3>m3: {{m3}}</h3>
+	  <h3>m4: {{m4}}</h3>
 
-  <button @click="update">更新</button>
+	  <button @click="update">更新</button>
 	</template>
 
 	<script lang="ts">
