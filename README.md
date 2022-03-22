@@ -28,6 +28,15 @@
     - [shallowReadonly 与 readonly](#shallowreadonly-%E4%B8%8E-readonly)
     - [shallowRef 与 ref](#shallowref-%E4%B8%8E-ref)
     - [isRef, isReactive 与 isReadonly](#isref-isreactive-%E4%B8%8E-isreadonly)
+  - [Composition API VS Option API](#composition-api-vs-option-api)
+  - [新组件](#%E6%96%B0%E7%BB%84%E4%BB%B6)
+    - [Fragment(片断)](#fragment%E7%89%87%E6%96%AD)
+    - [Teleport(瞬移)](#teleport%E7%9E%AC%E7%A7%BB)
+    - [Suspense(不确定的)](#suspense%E4%B8%8D%E7%A1%AE%E5%AE%9A%E7%9A%84)
+  - [其他新的API](#%E5%85%B6%E4%BB%96%E6%96%B0%E7%9A%84api)
+    - [全新的全局API](#%E5%85%A8%E6%96%B0%E7%9A%84%E5%85%A8%E5%B1%80api)
+    - [将原来的全局API转移到应用对象](#%E5%B0%86%E5%8E%9F%E6%9D%A5%E7%9A%84%E5%85%A8%E5%B1%80api%E8%BD%AC%E7%A7%BB%E5%88%B0%E5%BA%94%E7%94%A8%E5%AF%B9%E8%B1%A1)
+    - [模板语法变化](#%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95%E5%8F%98%E5%8C%96)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1546,3 +1555,225 @@ console.log(isReadonly(readonly({})))
 console.log(isProxy(reactive({})))
 console.log(isProxy(readonly({})))
 ```
+
+## Composition API VS Option API
+1. Option API的问题
+	在传统的Vue OptionsAPI中，新增或者修改一个需求，就需要分别在data，methods，computed里修改 ，滚动条反复上下移动
+	![avatar](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f84e4e2c02424d9a99862ade0a2e4114~tplv-k3u1fbpfcp-watermark.image)
+	![avatar](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e5ac7e20d1784887a826f6360768a368~tplv-k3u1fbpfcp-watermark.image)
+2. 使用Compisition API
+	我们可以更加优雅的组织代码，函数。让相关功能的代码更加有序的组织在一起
+	![avatar](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bc0be8211fc54b6c941c036791ba4efe~tplv-k3u1fbpfcp-watermark.image)
+	![avatar](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6cc55165c0e34069a75fe36f8712eb80~tplv-k3u1fbpfcp-watermark.image)
+![avatar](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2c421e5392504ecc94c222057dba338a~tplv-k3u1fbpfcp-watermark.image)
+
+
+## 新组件
+### Fragment(片断)
+1. 在Vue2中: 组件必须有一个根标签
+2. 在Vue3中: 组件可以没有根标签, 内部会将多个标签包含在一个Fragment虚拟元素中
+3. 好处: 减少标签层级, 减小内存占用
+```vue
+<template>
+    <h2>aaaa</h2>
+    <h2>aaaa</h2>
+</template>
+```
+
+### Teleport(瞬移)
+Teleport 提供了一种干净的方法, 让组件的html在父组件界面外的特定标签(很可能是body)下插入显示
+```vue
+<!-- ModalButton.vue -->
+<template>
+  <button @click="modalOpen = true">
+      Open full screen modal! (With teleport!)
+  </button>
+
+  <teleport to="body">
+    <div v-if="modalOpen" class="modal">
+      <div>
+        I'm a teleported modal! 
+        (My parent is "body")
+        <button @click="modalOpen = false">
+          Close
+        </button>
+      </div>
+    </div>
+  </teleport>
+</template>
+
+<script>
+import { ref } from 'vue'
+export default {
+  name: 'modal-button',
+  setup () {
+    const modalOpen = ref(false)
+    return {
+      modalOpen
+    }
+  }
+}
+</script>
+
+
+<style>
+.modal {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background-color: rgba(0,0,0,.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  width: 300px;
+  height: 300px;
+  padding: 5px;
+}
+</style>
+```
+```vue
+<!-- ModalButton.vue -->
+<template>
+  <h2>App父级组件</h2>
+  <modal-button></modal-button>
+</template>
+
+<script lang="ts">
+import ModalButton from './ModalButton.vue'
+
+export default {
+  setup() {
+    return {
+    }
+  },
+
+  components: {
+    ModalButton
+  }
+}
+</script>
+```
+
+### Suspense(不确定的)
+它们允许我们的应用程序在等待异步组件时渲染一些后备内容，可以让我们创建一个平滑的用户体验
+```vue
+<template>
+	<h2>App父级组件：Suspense</h2>
+  <Suspense>
+    <template v-slot:default>
+			<!-- 异步组件 -->
+      <AsyncComp/>
+      <!-- <AsyncAddress/> -->
+    </template>
+
+    <template v-slot:fallback>
+			<!-- loading 内容 -->
+      <h1>LOADING...</h1>
+    </template>
+  </Suspense>
+</template>
+
+<script lang="ts">
+/* 
+异步组件 + Suspense组件
+*/
+// import AsyncComp from './AsyncComp.vue'
+import AsyncAddress from './AsyncAddress.vue'
+import { defineAsyncComponent } from 'vue'
+// vue 2 中 动态引入组件
+const AsyncComp = () => import('./AsyncComp.vue')
+// vue 3 中 动态引入组件
+const AsyncComp = defineAsyncComponent(() => import('./AsyncComp.vue'))
+export default {
+  setup() {
+    return {
+     
+    }
+  },
+
+  components: {
+    AsyncComp,
+    AsyncAddress
+  }
+}
+</script>
+```
+```vue
+<!-- AsyncComp.vue -->
+<template>
+  <h2>AsyncComp子级组件</h2>
+  <p>{{msg}}</p>
+</template>
+
+<script lang="ts">
+
+export default {
+  name: 'AsyncComp',
+  setup () {
+    // return new Promise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     resolve({
+    //       msg: 'abc'
+    //     })
+    //   }, 2000)
+    // })
+    return {
+      msg: 'abc'
+    }
+  }
+}
+</script>
+```
+```vue
+<!-- AsyncAddress.vue -->
+<template>
+<h2>{{data}}</h2>
+</template>
+
+<script lang="ts">
+import axios from 'axios'
+export default {
+  async setup() {
+    const result = await axios.get('/data/address.json')
+    return {
+      data: result.data
+    }
+  }
+}
+</script>
+```
+
+
+## 其他新的API
+
+
+### 全新的全局API
+1. createApp()
+2. defineProperty()
+3. defineAsyncComponent()
+4. nextTick()
+
+
+### 将原来的全局API转移到应用对象
+1. app.component()
+2. app.config()
+3. app.directive()
+4. app.mount()
+5. app.unmount()
+6. app.use()
+
+
+### 模板语法变化
+1. `v-model`的本质变化
+2. prop：`value` -> `modelValue`；
+3. event：`input` -> `update:modelValue`；
+4. `.sync`修改符已移除, 由`v-model`代替
+5. `v-if`优先`v-for`解析
