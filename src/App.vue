@@ -9,13 +9,15 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent, reactive, toRefs } from 'vue'
+import { defineComponent, onMounted, reactive, toRefs, watch } from 'vue'
 // 引入子级组件
 import Header from './compontents/Header.vue'
 import Footer from './compontents/Footer.vue'
 import List from './compontents/List.vue'
 // 引入接口
 import { Todo } from './types/todo'
+// 导入浏览器缓存读取数据方法
+import { saveTodos, readTodos } from './utils/localStorageUtils'
 
 export default defineComponent({
   name: 'App',
@@ -29,10 +31,17 @@ export default defineComponent({
     // 数据共用，定义在 App 父级组件
     const state = reactive<{todos: Todo []}>({
       todos: [
-        { id: 1, title: 'benz', isCompleted: false },
-        { id: 2, title: 'bmw', isCompleted: true },
-        { id: 3, title: 'toyota', isCompleted: false }
+        // { id: 1, title: 'benz', isCompleted: false },
+        // { id: 2, title: 'bmw', isCompleted: true },
+        // { id: 3, title: 'toyota', isCompleted: false }
       ]
+    })
+
+    // 页面加载完毕后过了一会儿再读取数据
+    onMounted(() => {
+      setTimeout(() => {
+        state.todos = readTodos()
+      }, 2000)
     })
 
     // 添加数据
@@ -64,6 +73,16 @@ export default defineComponent({
       state.todos = state.todos.filter(todo => !todo.isCompleted)
     }
 
+    // // 监视操作：如果 todos 数组数据变化，直接存储到浏览器缓存中
+    // watch(() => state.todos, (value) => {
+    //   // 保存在浏览器缓存中
+    // localStorage.setItem('todos_key', JSON.stringify(value))
+    //   saveTodos(value)
+    // }, { deep: true })
+    // =>
+
+    // 监视操作：如果 todos 数组数据变化，直接存储到浏览器缓存中
+    watch(() => state.todos, saveTodos, { deep: true })
     return {
       ...toRefs(state),
       addTodo,
