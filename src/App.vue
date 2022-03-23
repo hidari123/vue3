@@ -3,7 +3,7 @@
 		<div class="todo-wrap">
 			<Header :addTodo="addTodo" />
 			<List :todos="todos" :deleteTodo="deleteTodo" :updateTodo="updateTodo"/>
-			<Footer />
+			<Footer :todos="todos" :checkAll="checkAll" :cleanUpAllCompletedTodos="cleanUpAllCompletedTodos" />
 		</div>
 	</div>
 </template>
@@ -50,11 +50,27 @@ export default defineComponent({
       todo.isCompleted = isCompleted
       console.log(todo.isCompleted)
     }
+
+    // 全选或全不选的方法
+    const checkAll = (isCompleted: boolean) => {
+      // 遍历数组
+      state.todos.forEach(todo => {
+        todo.isCompleted = isCompleted
+      })
+    }
+
+    // 清除所有选中数据
+    const cleanUpAllCompletedTodos = () => {
+      state.todos = state.todos.filter(todo => !todo.isCompleted)
+    }
+
     return {
       ...toRefs(state),
       addTodo,
       deleteTodo,
-      updateTodo
+      updateTodo,
+      checkAll,
+      cleanUpAllCompletedTodos
     }
   }
 })
