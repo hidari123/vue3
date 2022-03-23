@@ -37,6 +37,7 @@
     - [全新的全局API](#%E5%85%A8%E6%96%B0%E7%9A%84%E5%85%A8%E5%B1%80api)
     - [将原来的全局API转移到应用对象](#%E5%B0%86%E5%8E%9F%E6%9D%A5%E7%9A%84%E5%85%A8%E5%B1%80api%E8%BD%AC%E7%A7%BB%E5%88%B0%E5%BA%94%E7%94%A8%E5%AF%B9%E8%B1%A1)
     - [模板语法变化](#%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95%E5%8F%98%E5%8C%96)
+  - [vue3 和 vue2 比较](#vue3-%E5%92%8C-vue2-%E6%AF%94%E8%BE%83)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1777,3 +1778,12 @@ export default {
 3. event：`input` -> `update:modelValue`；
 4. `.sync`修改符已移除, 由`v-model`代替
 5. `v-if`优先`v-for`解析
+
+## vue3 和 vue2 比较
+
+1. 2020年9月发布正式版
+2. `vue3`中设计一套强大的组合`Composition API`代替`vue2`中`option API`，复用性更强
+3. 更好的支持`TS`
+4. 最重要：`vue3`中使用`Proxy`配合`Reflect`代替`vue2`中`Object.defineProperty()`方法实现数据响应式（数据代理）
+5. 新的组件：`Fragment`（片段）/ `Teleport`（瞬移）/`Suspense`（不确定）
+6. 设计一个新的脚手架`vite`
